@@ -243,8 +243,8 @@ GET /api/v1/asset/withdraw
 
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
-| id | string | No* | System order ID, max length 64 |
-| client_id | string | No* | Client-defined ID, max length 64 |
+| id        | string | No* | System order ID, max length 64 |
+| clientId  | string | No* | Client-defined ID, max length 64 |
 
 **Response Example:**
 
@@ -256,7 +256,7 @@ GET /api/v1/asset/withdraw
     "clientId": "my-withdraw-001",
     "currency": "USDT",
     "chain": "TRC20",
-    "type": "withdraw",
+    "type": "WITHDRAW",
     "internal": false,
     "address": "TXxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
     "tag": "",
@@ -264,7 +264,7 @@ GET /api/v1/asset/withdraw
     "tagFrom": "",
     "amount": "100.5",
     "fee": "1",
-    "status": "completed",
+    "status": "CONFIRMED",
     "hash": "abc123def456...",
     "confirmations": 20,
     "note": "test withdraw",
@@ -284,7 +284,7 @@ GET /api/v1/asset/withdraw
 | clientId | string | Client-defined ID |
 | currency | string | Currency |
 | chain | string | Chain name |
-| type | string | Transaction type (`deposit` / `withdraw`) |
+| type | string | Transaction type (`DEPOSIT` / `WITHDRAW`) |
 | internal | boolean | Whether it is an internal transfer |
 | address | string | Destination address |
 | tag | string | Destination address Tag/Memo |
@@ -317,9 +317,9 @@ GET /api/v1/asset/records
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
 | currency | string | No | Currency name; queries all if omitted, max length 60 |
-| type | string | No | Transaction type (`deposit` / `withdraw`); queries all if omitted, max length 30 |
-| start_time | integer | No | Start time (millisecond timestamp) |
-| end_time | integer | No | End time (millisecond timestamp) |
+| type | string | No | Transaction type (`DEPOSIT` / `WITHDRAW`); queries all if omitted, max length 30 |
+| startTime | integer | No | Start time (millisecond timestamp) |
+| endTime | integer | No | End time (millisecond timestamp) |
 
 **Response Example:**
 
@@ -333,7 +333,7 @@ GET /api/v1/asset/records
         "clientId": "my-withdraw-001",
         "currency": "USDT",
         "chain": "TRC20",
-        "type": "withdraw",
+        "type": "WITHDRAW",
         "internal": false,
         "address": "TXxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
         "tag": "",
@@ -341,7 +341,7 @@ GET /api/v1/asset/records
         "tagFrom": "",
         "amount": "100.5",
         "fee": "1",
-        "status": "completed",
+        "status": "CONFIRMED",
         "hash": "abc123def456...",
         "confirmations": 20,
         "note": "",

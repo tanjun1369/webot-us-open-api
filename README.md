@@ -79,7 +79,7 @@ pip install -r requirements.txt
 
 ### 2. Configure credentials
 
-Apply for an API Key at: https://www.webot.com/en-US/my-account/api
+Apply for an API Key at: https://www.webot.com/us/en/my-account/api
 
 > **Note:** You need to contact the official team to enable API whitelist access before you can create an API Key.
 
