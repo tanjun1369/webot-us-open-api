@@ -231,7 +231,7 @@ POST /api/v1/asset/withdraw
 
 ### 4. Query Single Withdrawal Record
 
-Query a single withdrawal record by system order ID or client-defined ID.
+Query a single withdrawal record by system order ID .
 
 **Permission required:** `Enable reading`
 
@@ -239,12 +239,11 @@ Query a single withdrawal record by system order ID or client-defined ID.
 GET /api/v1/asset/withdraw
 ```
 
-**Request Parameters** (at least one of `id` and `client_id` must be provided):
+**Request Parameters**:
 
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
-| id        | string | No* | System order ID, max length 64 |
-| clientId  | string | No* | Client-defined ID, max length 64 |
+| id        | string | YES*     | System order ID, max length 64 |
 
 **Response Example:**
 
