@@ -1,5 +1,12 @@
 # Webot Open API Documentation
 
+This is the main Webot US Open API reference. It covers general information, authentication (shared by all APIs), error codes, market data, trading, and account balances.
+
+**Additional API references** (they share the [General Information](#general-information) and [Authentication](#authentication) sections below):
+
+- [Fiat Open API](./webot-fiat-openapi.md) — fiat deposit/withdrawal and stablecoin conversion (`/api/v1/fiat/*`).
+- [Wallet Open API](./webot-wallet-openapi.md) — crypto asset deposit/withdrawal (`/api/v1/asset/*`).
+
 ## General Information
 
 | Item | Description |
@@ -43,6 +50,9 @@
   "timestamp": 1775045161359
 }
 ```
+
+- `code`: stable error identifier — branch your logic on this.
+- `message`: human-readable error description, for display/troubleshooting only — do not branch on it.
 
 > **Data Type Notes:**
 > - All price, quantity, and amount fields are returned as **strings** to preserve precision.

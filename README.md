@@ -4,7 +4,9 @@ Official API documentation for the Webot US cryptocurrency exchange.
 
 ## Documentation
 
-- [webot-openapi.md](./webot-openapi.md) — Full API reference covering public market data and private trading endpoints.
+- [webot-openapi.md](./webot-openapi.md) — Full API reference covering public market data, private trading, and account balances endpoints.
+- [webot-fiat-openapi.md](./webot-fiat-openapi.md) — Fiat Open API reference covering fiat deposit/withdrawal and stablecoin conversion (`/api/v1/fiat/*`).
+- [webot-wallet-openapi.md](./webot-wallet-openapi.md) — Wallet Open API reference covering crypto asset deposit/withdrawal (`/api/v1/asset/*`).
 
 ## Overview
 
@@ -41,6 +43,32 @@ Official API documentation for the Webot US cryptocurrency exchange.
 | `GET /api/v1/trade/fills` | Get trade fills |
 | `GET /api/v1/trade/fillsByOrderId` | Get fills by order ID |
 
+### Fiat Endpoints
+
+See [webot-fiat-openapi.md](./webot-fiat-openapi.md) for full details.
+
+| Endpoint | Description |
+|----------|-------------|
+| `POST /api/v1/fiat/fvb/withdraw/create` | Create fiat withdrawal |
+| `GET /api/v1/fiat/banks/list` | List payout banks |
+| `GET /api/v1/fiat/common/getWithdraws` | Query withdrawal records |
+| `GET /api/v1/fiat/deposit/getVirtualAccount` | Get deposit virtual account |
+| `GET /api/v1/fiat/common/getDeposits` | Query deposit records |
+| `POST /api/v1/fiat/convert/create` | Create stablecoin conversion |
+| `GET /api/v1/fiat/convert/record` | Query conversion result |
+
+### Wallet Endpoints
+
+See [webot-wallet-openapi.md](./webot-wallet-openapi.md) for full details.
+
+| Endpoint | Description |
+|----------|-------------|
+| `GET /api/v1/asset/currencies` | Query currency list (public, no auth) |
+| `GET /api/v1/asset/address` | Query deposit address |
+| `POST /api/v1/asset/withdraw` | Request crypto withdrawal |
+| `GET /api/v1/asset/withdraw` | Query single withdrawal record |
+| `GET /api/v1/asset/records` | Query deposit/withdrawal history |
+
 ## Quick Start
 
 ### 1. Install dependencies
@@ -51,7 +79,7 @@ pip install -r requirements.txt
 
 ### 2. Configure credentials
 
-Apply for an API Key at: https://www.pionex.us/en-US/my-account/api
+Apply for an API Key at: https://www.webot.com/en-US/my-account/api
 
 > **Note:** You need to contact the official team to enable API whitelist access before you can create an API Key.
 
