@@ -52,11 +52,13 @@ When a downstream service returns an explicit business error, that error code (i
 
 ### 1. Get Deposit Virtual Account
 
-Query the deposit virtual bank account. `channel` is required to select the deposit channel; `stripe_bank_transfer_wire` (non-same-name VA) and `fvbank_wire` (same-name VA) are supported.
+Query the deposit virtual bank account. `channel` is required to select the deposit channel; `stripe_bank_transfer_wire` (non-same-name VA), `fvbank_wire` (same-name VA), and `bridge_wire` (same-name VA) are supported.
 
 A single virtual account may contain multiple payment methods (`methods`): for example, domestic wire (`wire`) and international wire (`international_wire`) may coexist. The client iterates over `methods` and decides which fields to display based on `rail`. Every field is returned only when it has a value.
 
 The `fvbank_wire` virtual account must be applied for. If the call returns an error, contact your integration representative.
+
+The `bridge_wire` channel currently provides only the domestic wire (`wire`) payment method. The virtual account must be enabled; when it is not enabled, `BOT_BRIDGE_VA_NOT_FOUND` is returned and you must contact support.
 
 **Permission required:** `Enable reading`
 
@@ -68,7 +70,7 @@ GET /api/v1/fiat/deposit/getVirtualAccount
 
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
-| channel | string | Yes | Deposit channel: `stripe_bank_transfer_wire` (non-same-name VA) or `fvbank_wire` (same-name VA) |
+| channel | string | Yes | Deposit channel: `stripe_bank_transfer_wire` (non-same-name VA), `fvbank_wire` (same-name VA), or `bridge_wire` (same-name VA) |
 
 **Response Example:**
 
@@ -129,11 +131,37 @@ GET /api/v1/fiat/deposit/getVirtualAccount
 }
 ```
 
+**Response Example (`channel=bridge_wire`)** — currently returns only the domestic wire (`wire`) payment method:
+
+```json
+{
+  "result": true,
+  "timestamp": 1751000000000,
+  "data": {
+    "channel": "bridge_wire",
+    "methods": [
+      {
+        "bankName": "Bank of Nowhere",
+        "bankAddress": "1800 North Pole St., Orlando, FL 32801",
+        "beneficiaryName": "Sandbox Business",
+        "beneficiaryAddress": "123 Test Street, San Francisco, CA 94105, US",
+        "fee": {
+          "feePerOrder": "20"
+        },
+        "rail": "wire",
+        "accountNumber": "2659572793",
+        "routingNumber": "101019644"
+      }
+    ]
+  }
+}
+```
+
 **Response Fields:**
 
 | Field | Type | Description |
 |-------|------|-------------|
-| channel | string | Upstream channel this virtual account belongs to (e.g. `stripe_bank_transfer_wire`, `fvbank_wire`) |
+| channel | string | Upstream channel this virtual account belongs to (e.g. `stripe_bank_transfer_wire`, `fvbank_wire`, `bridge_wire`) |
 | methods | object[] | Payment method list, at least 1 element, see below |
 
 `methods[]` element (all fields returned only when they have a value):
@@ -166,6 +194,12 @@ The following error codes are returned only when `channel=fvbank_wire` and the a
 | BOT_FVBANK_VA_CREATING | Virtual account is being created; retry later |
 | BOT_FVBANK_VA_CREATE_FAILED | Virtual account creation failed; contact support |
 
+**Bridge Virtual Account Status Errors** (returned only when `channel=bridge_wire` and the account is not ready)
+
+| code | Description |
+|------|-------------|
+| BOT_BRIDGE_VA_NOT_FOUND | Virtual account does not exist; contact support |
+
 ---
 
 ### 2. Query Deposit Records
@@ -182,7 +216,7 @@ GET /api/v1/fiat/common/getDeposits
 
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
-| channel | string | Yes | Deposit channel: `stripe_bank_transfer_wire` or `fvbank_wire`, matching `getVirtualAccount` |
+| channel | string | Yes | Deposit channel: `stripe_bank_transfer_wire`, `fvbank_wire`, or `bridge_wire`, matching `getVirtualAccount` |
 | page | int | No | Page number, starting from 1; empty or 0 returns page 1 |
 | limit | int | No | Page size, range `[1,50]`; out-of-range or 0 uses 50 |
 | startTime | int64 | No | Start time (millisecond timestamp, filtered by creation time, inclusive) |
