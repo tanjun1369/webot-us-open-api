@@ -282,7 +282,7 @@ GET /api/v1/fiat/common/getDeposits
 
 ### 3. Create Conversion
 
-Create a stablecoin conversion. Asynchronous; only returns an order ID (it is essentially a market order trade — ensure the `sourceCoin` balance is sufficient and the trading pair `symbol` exists; the effect is the same as trading via `/api/v1/trade/order`).
+Create a stablecoin conversion. The operation is asynchronous and only returns an order ID. Ensure the `sourceCoin` balance is sufficient and the conversion pair exists.
 
 **Permission required:** `Enable trading`
 
@@ -297,12 +297,11 @@ POST /api/v1/fiat/convert/create
 | sourceCoin | string | Yes | Source coin |
 | targetCoin | string | Yes | Target coin |
 | sourceAmount | string | Yes | Source coin amount |
-| clientOrderId | string | No | UUID, idempotency key; if passed, used for deduplication to avoid duplicate orders on retry |
 
 **Request Example:**
 
 ```json
-{ "sourceCoin": "USDC", "targetCoin": "USDT", "sourceAmount": "50", "clientOrderId": "5ab3cb7e-e3f4-4417-83d3-339ba101002a" }
+{ "sourceCoin": "USDC", "targetCoin": "USDT", "sourceAmount": "50" }
 ```
 
 **Response Example:**
@@ -319,7 +318,7 @@ POST /api/v1/fiat/convert/create
 
 **Errors**
 
-If parameter validation fails (missing field, invalid `clientOrderId` format, or the coin pair does not exist / is not open for trading), `BOT_INVALID_ARGUMENT` is returned before the downstream request; see `message` for the specific reason.
+If parameter validation fails (missing field, or the coin pair does not exist / is not open for conversion), `BOT_INVALID_ARGUMENT` is returned before the downstream request; see `message` for the specific reason.
 
 Downstream business errors are passed through with `code` in the form `TAPI_*` and `message` as the human-readable description. The table below lists common codes (non-exhaustive); any downstream error not listed maps to `BOT_INTERNAL_ERROR`:
 
@@ -331,7 +330,7 @@ Downstream business errors are passed through with `code` in the form `TAPI_*` a
 
 ### 4. Query Conversion Result
 
-Query the conversion result; the coin pair must be provided. To query trade history, call `/api/v1/trade/allOrders`.
+Query a conversion result by order ID. Each result includes its coin pair and direction. To query trade history, call `/api/v1/trade/allOrders`.
 
 **Permission required:** `Enable reading`
 
@@ -344,8 +343,6 @@ GET /api/v1/fiat/convert/record
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
 | orderId | string | Yes | Order ID |
-| sourceCoin | string | Yes | Source coin |
-| targetCoin | string | Yes | Target coin |
 
 **Response Example:**
 
@@ -359,11 +356,8 @@ GET /api/v1/fiat/convert/record
     "targetCoin": "USDT",
     "targetAmount": "50.2",
     "avgPrice": "1.004",
-    "feeCoin": "USDT",
-    "feeAmount": "0.05",
     "status": "SUCCESS",
-    "timestamp": 1700000000000,
-    "clientOrderId": "abc-1"
+    "timestamp": 1700000000000
   },
   "timestamp": 1751000000000
 }
@@ -379,17 +373,14 @@ GET /api/v1/fiat/convert/record
 | targetCoin | string | Target coin |
 | targetAmount | string | Target coin amount |
 | avgPrice | string | Average fill price |
-| feeCoin | string | Fee coin |
-| feeAmount | string | Fee amount |
-| status | string | Order status: `SUCCESS` (filled, terminal) / `PENDING` (matching, keep polling) / `FAILED` (canceled/rejected/expired, terminal). When polling, "not PENDING means terminal" |
+| status | string | Order status: `SUCCESS` (completed, terminal) / `PENDING` (processing, keep polling) / `FAILED` (failed, terminal). When polling, "not PENDING means terminal" |
 | timestamp | int64 | Timestamp |
-| clientOrderId | string | Idempotency key passed when the order was created; empty if not provided |
 
 **Errors**
 
-If parameter validation fails (missing field, or the coin pair does not exist), `BOT_INVALID_ARGUMENT` is returned before the downstream request; see `message` for the specific reason.
+If `orderId` is missing or the conversion order does not exist, `BOT_INVALID_ARGUMENT` is returned; see `message` for the specific reason.
 
-If the downstream query fails or the order does not exist, `BOT_INTERNAL_ERROR` is returned; see `message` for details.
+If the downstream query fails, `BOT_INTERNAL_ERROR` is returned; see `message` for details.
 
 ---
 
