@@ -6,6 +6,7 @@ This is the main Webot US Open API reference. It covers general information, aut
 
 - [Fiat Open API](./webot-fiat-openapi.md) — fiat deposit/withdrawal and stablecoin conversion (`/api/v1/fiat/*`).
 - [Wallet Open API](./webot-wallet-openapi.md) — crypto asset deposit/withdrawal (`/api/v1/asset/*`).
+- [Institution Open API](./webot-institution-openapi.md) — institutional service providers operating bound sub-accounts (`/api/v1/institution/*`).
 
 ## General Information
 
