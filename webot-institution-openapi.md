@@ -72,8 +72,6 @@ The following error codes may be returned by any endpoint:
 | UNAUTHENTICATED | 401 | Authentication failed (missing token, invalid signature, etc.) |
 | FORBIDDEN | 403 | Caller is not a registered institution, `uid` is not a sub-account bound to your institution, or the account is suspended |
 | INVALID_ARGUMENTS | 400 | Request parameter is missing or invalid |
-| INTERNAL_ERROR | 500 | Internal error |
-| DOWNSTREAM_ERROR | 502 | The underlying Webot API returned a business error; the original error code is returned as `code` (e.g. `TAPI_*`, `BOT_*`), with `message` as its human-readable description |
 
 ---
 
