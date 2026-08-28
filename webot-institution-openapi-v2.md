@@ -1,8 +1,8 @@
 # Webot US Institution Open API Documentation (v2)
 
-HTTP API reference for institutional service providers (`/api/v2/institution/*`). An institution uses **its own API Key (RSA key pair)** to onboard and operate the sub-accounts (`userId`) bound to it — fiat deposit/withdrawal, stablecoin conversion, on-chain assets, and trading-account balances.
+HTTP API reference for institutional service providers (`/api/v2/institution/*`). An institution uses **its own API Key (an RSA or Ed25519 key pair)** to onboard and operate the sub-accounts (`userId`) bound to it — fiat deposit/withdrawal, stablecoin conversion, on-chain assets, and trading-account balances.
 
-> This is the **v2** institution reference. Unlike v1 ([webot-institution-openapi.md](./webot-institution-openapi.md)), v2 uses **RSA signature authentication** and identifies the target sub-account by **`userId`** (a UUID) rather than `uid`. Authentication is documented in full below — v2 does **not** share the v1 authentication section.
+> This is the **v2** institution reference. Unlike v1 ([webot-institution-openapi.md](./webot-institution-openapi.md)), v2 uses **public-key signature authentication** (RSA or Ed25519) and identifies the target sub-account by **`userId`** (a UUID) rather than `uid`. Authentication is documented in full below — v2 does **not** share the v1 authentication section.
 
 ## General Information
 
@@ -74,34 +74,36 @@ Business failures are returned as HTTP `200` with `result: false`. The only two 
 
 ## Authentication
 
-Every request (except where noted) is authenticated with your institution API Key and an **RSA signature**. Apply for an API Key by registering your **RSA public key** with Webot; you keep the private key.
+Every request (except where noted) is authenticated with your institution API Key and a **signature**. Apply for an API Key by registering your **public key** with Webot; you keep the private key.
 
 ### Headers
 
 | Header | Description |
 |--------|-------------|
 | `X-APIKEY` | Your API Key, in the form `webot_xxxxxxxx`. Used to look up your registered public key. |
-| `X-Signature` | Base64 (standard encoding) of the RSA signature over the canonical string below. |
+| `X-Signature` | Base64 (standard encoding) of the signature over the canonical string below. |
 
-### Required Query Parameters (on every signed request)
+### Signature algorithms
+
+The algorithm is determined by the **type of public key you registered** — you do not choose it per request. Two key types are supported:
+
+| Key type | How to sign | Notes |
+|----------|-------------|-------|
+| **RSA** | RSA-PSS over the **SHA-256** digest | 2048–4096-bit key. Salt length 32 recommended (20 / 32 / 64 all accepted). **Not** PKCS#1 v1.5. |
+| **Ed25519** | Sign the message bytes **directly** | Do **not** pre-hash — EdDSA already includes SHA-512. |
+
+- Register the public key in **PKIX/SPKI** form (`-----BEGIN PUBLIC KEY-----`). PKCS#1 "RSA PUBLIC KEY" and other algorithms (ECDSA, DSA, …) are not accepted.
+- RSA reference: Go `rsa.SignPSS(rand, priv, crypto.SHA256, sha256(msg), nil)`; OpenSSL `-sigopt rsa_padding_mode:pss`.
+
+### Required query parameter
 
 | Parameter | Type | Description |
 |-----------|------|-------------|
-| `client_id` | string | A per-request UUID (nonce). Must be present and participates in the signature. |
-| `timestamp` | integer | Current time in **seconds** (Unix). Must be present and participates in the signature. |
+| `timestamp` | integer | Current time in **seconds** (Unix). Required on every signed request and participates in the signature. Must be within **±5 seconds** of server time, otherwise the request is rejected. |
 
-> These two parameters are required in the **query string** of *every* signed request, including `POST`/`DELETE` (whose business payload is in the JSON body).
+> `timestamp` goes in the **query string** on every request, including `POST` (whose business payload is in the JSON body). There is **no** `client_id` / nonce parameter.
 
-### Signature Algorithm
-
-**RSA-PSS with SHA-256**, salt length equal to the digest length.
-
-- Go: `rsa.SignPSS(..., crypto.SHA256, &rsa.PSSOptions{SaltLength: rsa.PSSSaltLengthEqualsHash})`
-- OpenSSL: `-sigopt rsa_padding_mode:pss -sigopt rsa_pss_saltlen:-1`
-
-> Do **not** use PKCS#1 v1.5 or HMAC — either will be rejected as a signature mismatch.
-
-### Canonical String
+### Canonical string
 
 Sign the following string:
 
@@ -112,19 +114,29 @@ Sign the following string:
 | Segment | Construction |
 |---------|--------------|
 | `sub_path` | The request path, verbatim (not URL-encoded), e.g. `/api/v2/institution/account/balances`. |
-| `sorted_query_string` | For each query parameter, percent-encode the key and value separately using `encodeURIComponent` semantics (do **not** escape `A-Za-z0-9 - _ . ! ~ * ' ( )`; hex digits uppercase), join as `key=value`, then **sort the `key=value` strings lexicographically** and join with `&`. `client_id` and `timestamp` are query parameters and **must** be included. |
-| `request_body` | For `POST`/`DELETE` with a body: the raw JSON body, verbatim. For `GET`: the empty string (so the canonical string contains `::`). |
-| `timestamp` | The same `timestamp` seconds value, appended again at the end. |
+| `sorted_query_string` | Percent-encode each key and value **separately** with `encodeURIComponent` semantics — do **not** escape `A-Za-z0-9 - _ . ! ~ * ' ( )`, hex digits uppercase, space is `%20` (do not use form-encoding, which emits `+`). Join each as `key=value`, then **sort the `key=value` strings** and join with `&`. Every query parameter participates — `timestamp` plus business params such as `userId`; repeated keys are kept and sorted by value. |
+| `request_body` | For `POST` with a JSON body: the raw body, verbatim (not re-serialized). For `GET`: the empty string (so the canonical string shows `::`). |
+| `timestamp` | The same seconds value, appended again at the end. |
 
-**Example (GET, no body):**
+**Examples:**
 
 ```
-/api/v2/institution/account/balances:client_id=3f2b...%2D...&timestamp=1785706000&userId=88001234-....:1785706000
+GET  (no body):   /api/v2/institution/account/balances:timestamp=1785706000&userId=88001234::1785706000
+POST (JSON body): /api/v2/institution/kyb/create:timestamp=1785706000:{"userId":"88001234"}:1785706000
 ```
 
-(Body segment is empty, producing the `:...:` gap.)
+Then `X-Signature = base64( sign( canonical_string ) )`, sent together with `X-APIKEY`.
 
-Compute `X-Signature = base64( RSA-PSS-SHA256( canonical_string, your_private_key ) )` and send it with `X-APIKEY`.
+---
+
+## Permissions (Scopes)
+
+Each API Key is granted one or more **scopes** at registration (default: `read`). Every endpoint requires a scope; a request whose key lacks the required scope is rejected with `P_PAY_OPEN_API_PERMISSION_DENIED` and never reaches business logic.
+
+- **Read** endpoints (the `GET` queries — balances, orders, records, requirements, status, lists) require read access.
+- **State-changing** endpoints (`POST` create / submit / update / delete — sub-account and KYB onboarding, payouts, on-chain withdrawals, conversions, address-book and file writes) require the corresponding **write** scope.
+
+Contact Webot to grant your key the scopes your integration needs; the scopes attached to a key cannot be changed by the caller.
 
 ---
 
