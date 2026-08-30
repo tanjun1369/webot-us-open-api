@@ -328,8 +328,8 @@ GET /api/v2/institution/wire/deposit/account/requirements
 |-----------|------|----------|-------------|
 | userId | string | Yes | Sub-account UUID. |
 | channel | string | Yes | Channel identifier. Currently only `bridge` is supported. |
-| businessType | string | No | Business type; values per the response `enumValues`. Leave empty if unsure. |
-| country | string | No | ISO 3166-1 alpha-2. |
+
+> Do not pass `country` or `businessType` — the requirement set follows the values from your platform KYB (`subject.country` / `subject.businessType`).
 
 **Response Fields (`data`):**
 
@@ -343,7 +343,7 @@ GET /api/v2/institution/wire/deposit/account/requirements
 | tosMode | string | `NONE` / `HOSTED_LINK` / `INLINE_ACCEPT`. |
 | tosUrl | string | Terms URL; empty when `NONE`. |
 | termsVersion | string | Terms version; non-empty only for `INLINE_ACCEPT`. |
-| requiresBusinessType | boolean | If true, re-call with `businessType` to get the precise list. |
+| requiresBusinessType | boolean | Whether a business type is still needed to refine the list. Always `false` in this API — the business type comes from platform KYB. |
 
 `Requirement`: `{ key, kind (FIELD|DOCUMENT), mode (REQUIRED|OPTIONAL|CONDITIONAL), label, regex, example, enumValues[], condition }`.
 
@@ -361,14 +361,14 @@ POST /api/v2/institution/wire/deposit/account/create
 |-------|------|----------|-------------|
 | userId | string | Yes | Sub-account UUID. |
 | channel | string | No | Channel. Currently only `bridge` is supported. |
-| country | string | Yes | ISO 3166-1 alpha-2. **Must match the value used when calling requirements.** |
-| businessType | string | No | Business type; must match the value used when calling requirements. |
 | signedAgreementId | string | Cond. | For `tosMode = HOSTED_LINK`. |
 | acceptedTerms | boolean | Cond. | For `tosMode = INLINE_ACCEPT`. |
 | termsVersion | string | Cond. | For `tosMode = INLINE_ACCEPT`. |
 | subject | object | No | `{ "fields": [ { "key", "value" } ] }`. |
 | representatives | object[] | No | `[ { "representativeRef", "fields": [...] } ]`. |
 | documents | object[] | No | **Provide all required documents in full every time.** Each: `{ purpose, fileId, scope, representativeRef }`. |
+
+> Do not pass `country` or `businessType` here either — they come from your platform KYB. Any `fileId` you reference must belong to this `userId`.
 
 **Response Example:**
 
