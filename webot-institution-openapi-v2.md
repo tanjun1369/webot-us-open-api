@@ -335,10 +335,10 @@ GET /api/v2/institution/wire/deposit/account/requirements
 
 | Field | Type | Description |
 |-------|------|-------------|
-| subjectFields | Requirement[] | Subject fields still missing. |
+| subjectFields | Requirement[] | Subject fields still missing (what your platform KYB has not already provided). |
 | subjectDocuments | Requirement[] | Subject documents still missing (flattened, one per purpose). |
 | requiresRepresentatives | boolean | Whether representative info is required. |
-| representatives | object[] | Per-contact missing items: `{ representativeRef, fields[], documents[] }`. |
+| representatives | object[] | What each contact still needs, one entry per contact: `{ representativeRef, fields[], documents[] }`. Contacts already on file are returned **with their `representativeRef`** — reuse that value when submitting. If there is no contact yet, a single entry with an empty `representativeRef` and the full template is returned, to fill in your first contact. |
 | fileLimit | object | `{ maxFileCount, maxFileBytes, maxTotalBytes, contentTypes[] }`. |
 | tosMode | string | `NONE` / `HOSTED_LINK` / `INLINE_ACCEPT`. |
 | tosUrl | string | Terms URL; empty when `NONE`. |
@@ -644,7 +644,7 @@ GET /api/v2/institution/wire/deposit/accounts
 GET /api/v2/institution/wire/deposit/orders
 ```
 
-**Request Parameters:** `userId` (required), `channel`, `currency`, `status`, `startTime`, `endTime`, `page`, `size`.
+**Request Parameters:** `userId` (required), `channel` (required), `currency`, `status`, `startTime`, `endTime`, `page`, `size`.
 
 **Response Fields:** `list[]` of `DepositOrder`, plus `total`.
 
@@ -716,7 +716,7 @@ POST /api/v2/institution/wire/payout/account/create
 GET /api/v2/institution/wire/payout/accounts
 ```
 
-**Request Parameters:** `userId` (required), `channel`, `currency`, `page`, `size`.
+**Request Parameters:** `userId` (required), `channel` (required), `currency`, `page`, `size`.
 
 **Response Fields:** `list[]` of `PayoutAccount`, plus `total`.
 
@@ -783,7 +783,7 @@ POST /api/v2/institution/wire/payout/order/create
 GET /api/v2/institution/wire/payout/orders
 ```
 
-**Request Parameters:** `userId` (required), `channel`, `status`, `startTime`, `endTime`, `page`, `size`. **Response:** `list[]` of `PayoutOrder`, plus `total`.
+**Request Parameters:** `userId` (required), `channel` (required), `status`, `startTime`, `endTime`, `page`, `size`. **Response:** `list[]` of `PayoutOrder`, plus `total`.
 
 ### 3. Get a Payout Order
 
