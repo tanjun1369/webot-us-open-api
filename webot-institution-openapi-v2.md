@@ -251,7 +251,7 @@ Platform KYB and channel KYB use **different** field sources — fill them accor
 Platform KYB fields follow a **fixed, documented field list** — fill them according to this documentation, not by calling an endpoint. Every item has a **canonical key** in a flat key space:
 
 - Subject (company) fields use the `subject.` prefix; each is one `{ "key": "...", "value": "..." }` under `subject.fields`.
-- Each related natural person uses the `representative.` prefix; submit one entry per person under `representatives[]`, distinguished by `representative.ref`.
+- Each related natural person uses the `representative.` prefix; submit one entry per person under `representatives[]`, distinguished by the `representativeRef` property.
 - Documents share the same key space (their key is the document's purpose) and carry a `fileId` — upload first (see [File Endpoints](#file-endpoints)), then reference by `fileId`.
 
 The complete field list, required markers, formats, conditional rules, enums, and the document matrix are in **[Platform KYB Field Reference](#platform-kyb-field-reference)** below.
@@ -472,7 +472,7 @@ The canonical fields and documents accepted by `POST /kyb/create`. Applies to co
 | `subject.termsAgreed` | M | M | Must be `true`, else the application is rejected. |
 | `subject.dataUsageAgreed` | M | M | Must be `true` (authorizes third-party data verification). |
 | `subject.serviceAgreementType` | M | M | `FULL` / `RECIPIENT` (enum §[Enums](#5-enums)). |
-| `subject.signerPersonRefId` | M | M | Must equal the `representative.ref` of the person designated as the authorized signer. |
+| `subject.signerPersonRefId` | M | M | Must equal the `representativeRef` of the person designated as the authorized signer. |
 | `subject.agreedAt` | M | M | ISO 8601 (e.g. `2026-08-25T10:12:33Z`). |
 | `subject.deviceData.ipAddress` | M | M | Signer's public IP at consent time (IPv6-compatible), ≤45. |
 | `subject.deviceData.userAgent` | M | M | Signer's User-Agent, ≤512. |
@@ -517,11 +517,11 @@ Value is a `fileId`. Required matrix by jurisdiction:
 
 ### 3. Representative fields (`representative.*`)
 
-One set per person, distinguished by `representative.ref`.
+One set per person, distinguished by the `representativeRef` property (see [Submission structure](#submission-structure)). Note: the per-person id is the `representativeRef` property of each `representatives[]` entry, **not** a `fields[]` key.
 
 | Key | HK | US | Rules |
 |-----|:--:|:--:|-------|
-| `representative.ref` | M | M | Stable per-person id in your system; keep unchanged across supplements. |
+| `representativeRef` *(property — not a `fields[]` key)* | M | M | Stable per-person id in your system; keep unchanged across supplements. Supplied as the `representativeRef` property of each `representatives[]` entry (see [Submission structure](#submission-structure)) — do **not** place it inside `fields`. `subject.signerPersonRefId` references this value. |
 | `representative.role.responsibility` | O | O | The person's responsibility relative to the company — **single value** from the enum (§[Enums](#5-enums)): `ULTIMATE_BENEFICIAL_OWNER` / `AUTHORIZED_REPRESENTATIVE` / `DIRECTOR`. |
 | `representative.firstName` | M | M | English first name, ≤100. Must match the ID exactly. |
 | `representative.middleName` | O | O | English middle name, ≤100. Provide if present on the ID. |
