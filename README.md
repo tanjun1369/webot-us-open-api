@@ -7,7 +7,8 @@ Official API documentation for the Webot US cryptocurrency exchange.
 - [webot-openapi.md](./webot-openapi.md) — Full API reference covering public market data, private trading, and account balances endpoints.
 - [webot-fiat-openapi.md](./webot-fiat-openapi.md) — Fiat Open API reference covering fiat deposit/withdrawal and stablecoin conversion (`/api/v1/fiat/*`).
 - [webot-wallet-openapi.md](./webot-wallet-openapi.md) — Wallet Open API reference covering crypto asset deposit/withdrawal (`/api/v1/asset/*`).
-- [webot-institution-openapi.md](./webot-institution-openapi.md) — Institution Open API reference for institutional service providers operating bound sub-accounts (`/api/v1/institution/*`).
+- [webot-institution-openapi.md](./webot-institution-openapi.md) — Institution Open API reference (v1) for institutional service providers operating bound sub-accounts (`/api/v1/institution/*`).
+- [webot-institution-openapi-v2.md](./webot-institution-openapi-v2.md) — Institution Open API reference (v2) with public-key (RSA / Ed25519) signature auth and `userId`-based sub-accounts (`/api/v2/institution/*`).
 
 ## Overview
 
