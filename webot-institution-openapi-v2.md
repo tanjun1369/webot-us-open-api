@@ -663,7 +663,7 @@ GET /api/v2/institution/wire/deposit/order
   "result": true,
   "timestamp": 1785706000000,
   "data": {
-    "orderId": "d-9", "channel": "fvbank", "creditCurrency": "USDT",
+    "orderId": "d-9", "channel": "bridge", "creditCurrency": "USDT",
     "receivedCurrency": "USD", "receivedAmount": "100", "feeAmount": "1",
     "creditAmount": "99", "status": "COMPLETED", "rail": "wire", "rate": "1",
     "createdAt": 1785700000000, "updatedAt": 1785700100000
