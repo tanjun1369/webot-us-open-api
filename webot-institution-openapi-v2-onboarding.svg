@@ -1,0 +1,250 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="2280" viewBox="0 0 900 2280" font-family="-apple-system, Segoe UI, Helvetica, Arial, sans-serif" role="img" aria-label="Webot Institution Open API v2 end-to-end flow">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#475569"/>
+    </marker>
+    <marker id="arrowRed" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#DC2626"/>
+    </marker>
+    <marker id="arrowBus" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#64748B"/>
+    </marker>
+  </defs>
+
+  <!-- opaque canvas so the diagram reads the same on light and dark pages -->
+  <rect x="0" y="0" width="900" height="2280" fill="#ffffff"/>
+
+  <!-- title -->
+  <text x="450" y="40" text-anchor="middle" font-size="22" font-weight="700" fill="#0F172A">Webot Institution Open API v2 — End-to-End Flow</text>
+  <text x="450" y="64" text-anchor="middle" font-size="13" fill="#64748B">Onboarding (Phases 1–4) then money movement: deposit, fiat payout &amp; on-chain withdrawal (/api/v2/institution/*)</text>
+
+  <!-- ===================== PHASE BANDS ===================== -->
+  <rect x="24" y="92"   width="852" height="170" rx="12" fill="#EEF2FF"/>
+  <rect x="24" y="278"  width="852" height="120" rx="12" fill="#ECFEFF"/>
+  <rect x="24" y="414"  width="852" height="286" rx="12" fill="#FEF3C7"/>
+  <rect x="24" y="716"  width="852" height="356" rx="12" fill="#FFEDD5"/>
+  <rect x="24" y="1164" width="852" height="98"  rx="12" fill="#D1FAE5"/>
+  <rect x="24" y="1278" width="852" height="508" rx="12" fill="#FCE7F3"/>
+  <rect x="24" y="1802" width="852" height="334" rx="12" fill="#EDE9FE"/>
+  <rect x="24" y="2152" width="852" height="106" rx="12" fill="#CCFBF1"/>
+
+  <!-- ===================== PHASE CHIPS ===================== -->
+  <g font-size="11">
+    <rect x="44" y="150"  width="200" height="54" rx="8" fill="#6366F1"/>
+    <text x="60" y="173" fill="#C7D2FE" font-weight="700" letter-spacing="1">PHASE 1</text>
+    <text x="60" y="192" fill="#ffffff" font-size="14" font-weight="700">Credentials &amp; Auth</text>
+
+    <rect x="44" y="311"  width="200" height="54" rx="8" fill="#0891B2"/>
+    <text x="60" y="334" fill="#CFFAFE" font-weight="700" letter-spacing="1">PHASE 2</text>
+    <text x="60" y="353" fill="#ffffff" font-size="14" font-weight="700">Create Sub-Account</text>
+
+    <rect x="44" y="530"  width="200" height="54" rx="8" fill="#D97706"/>
+    <text x="60" y="553" fill="#FDE68A" font-weight="700" letter-spacing="1">PHASE 3</text>
+    <text x="60" y="572" fill="#ffffff" font-size="14" font-weight="700">Platform KYB</text>
+
+    <rect x="44" y="867"  width="200" height="54" rx="8" fill="#EA580C"/>
+    <text x="60" y="890" fill="#FED7AA" font-weight="700" letter-spacing="1">PHASE 4</text>
+    <text x="60" y="909" fill="#ffffff" font-size="14" font-weight="700">Channel Onboarding</text>
+
+    <rect x="44" y="1186" width="200" height="54" rx="8" fill="#059669"/>
+    <text x="60" y="1209" fill="#A7F3D0" font-weight="700" letter-spacing="1">OPERATE</text>
+    <text x="60" y="1228" fill="#ffffff" font-size="14" font-weight="700">Deposit (in)</text>
+
+    <rect x="44" y="1505" width="200" height="54" rx="8" fill="#DB2777"/>
+    <text x="60" y="1528" fill="#FBCFE8" font-weight="700" letter-spacing="1">OPERATE</text>
+    <text x="60" y="1547" fill="#ffffff" font-size="14" font-weight="700">Fiat Payout (out)</text>
+
+    <rect x="44" y="1942" width="200" height="54" rx="8" fill="#7C3AED"/>
+    <text x="60" y="1965" fill="#DDD6FE" font-weight="700" letter-spacing="1">OPERATE</text>
+    <text x="60" y="1984" fill="#ffffff" font-size="14" font-weight="700">On-chain (out)</text>
+
+    <rect x="44" y="2178" width="200" height="54" rx="8" fill="#0F766E"/>
+    <text x="60" y="2201" fill="#99F6E4" font-weight="700" letter-spacing="1">OPERATE</text>
+    <text x="60" y="2220" fill="#ffffff" font-size="14" font-weight="700">Convert · Balances</text>
+  </g>
+
+  <!-- ===================== FLOW BOXES ===================== -->
+  <!-- Phase 1 -->
+  <g>
+    <rect x="300" y="112" width="300" height="58" rx="8" fill="#6366F1"/>
+    <text x="450" y="136" text-anchor="middle" font-size="13.5" font-weight="700" fill="#ffffff">Register public key → get API Key</text>
+    <text x="450" y="156" text-anchor="middle" font-size="11" fill="#E0E7FF">RSA / Ed25519 key pair · scopes granted</text>
+
+    <rect x="300" y="192" width="300" height="58" rx="8" fill="#6366F1"/>
+    <text x="450" y="216" text-anchor="middle" font-size="13.5" font-weight="700" fill="#ffffff">Sign every request</text>
+    <text x="450" y="236" text-anchor="middle" font-size="11" fill="#E0E7FF">X-APIKEY + X-Signature · timestamp</text>
+  </g>
+
+  <!-- Phase 2 -->
+  <g>
+    <rect x="300" y="306" width="300" height="58" rx="8" fill="#0891B2"/>
+    <text x="450" y="330" text-anchor="middle" font-size="13" font-weight="700" fill="#ffffff" font-family="Menlo, Consolas, monospace">POST /user/create</text>
+    <text x="450" y="350" text-anchor="middle" font-size="11" fill="#CFFAFE">→ userId (sub-account UUID)</text>
+  </g>
+
+  <!-- Phase 3 -->
+  <g>
+    <rect x="300" y="442" width="300" height="58" rx="8" fill="#D97706"/>
+    <text x="450" y="466" text-anchor="middle" font-size="12.5" font-weight="700" fill="#ffffff" font-family="Menlo, Consolas, monospace">POST /file/upload → POST /kyb/create</text>
+    <text x="450" y="486" text-anchor="middle" font-size="11" fill="#FEF3C7">subject + representatives + documents</text>
+
+    <rect x="300" y="522" width="300" height="58" rx="8" fill="#D97706"/>
+    <text x="450" y="546" text-anchor="middle" font-size="13" font-weight="700" fill="#ffffff" font-family="Menlo, Consolas, monospace">GET /kyb — poll status</text>
+    <text x="450" y="566" text-anchor="middle" font-size="11" fill="#FEF3C7">SUBMITTED → PENDING → …</text>
+
+    <!-- decision 1 -->
+    <polygon points="450,592 555,636 450,680 345,636" fill="#ffffff" stroke="#B45309" stroke-width="2"/>
+    <text x="450" y="632" text-anchor="middle" font-size="12.5" font-weight="700" fill="#92400E">Platform KYB</text>
+    <text x="450" y="650" text-anchor="middle" font-size="12.5" font-weight="700" fill="#92400E">APPROVED?</text>
+  </g>
+
+  <!-- Phase 4 -->
+  <g>
+    <rect x="300" y="744" width="300" height="58" rx="8" fill="#EA580C"/>
+    <text x="450" y="766" text-anchor="middle" font-size="11.5" font-weight="700" fill="#ffffff" font-family="Menlo, Consolas, monospace">GET /wire/deposit/account/requirements</text>
+    <text x="450" y="786" text-anchor="middle" font-size="11" fill="#FFEDD5">channel=bridge · render dynamic form</text>
+
+    <rect x="300" y="824" width="300" height="58" rx="8" fill="#EA580C"/>
+    <text x="450" y="846" text-anchor="middle" font-size="11.5" font-weight="700" fill="#ffffff" font-family="Menlo, Consolas, monospace">POST /wire/deposit/account/create</text>
+    <text x="450" y="866" text-anchor="middle" font-size="11" fill="#FFEDD5">channel KYB · all documents → IN_REVIEW</text>
+
+    <rect x="300" y="904" width="300" height="58" rx="8" fill="#EA580C"/>
+    <text x="450" y="928" text-anchor="middle" font-size="12.5" font-weight="700" fill="#ffffff" font-family="Menlo, Consolas, monospace">GET /wire/deposit/account — poll</text>
+    <text x="450" y="948" text-anchor="middle" font-size="11" fill="#FFEDD5">IN_REVIEW / ACTION_REQUIRED / APPROVED</text>
+
+    <!-- decision 2 -->
+    <polygon points="450,972 555,1016 450,1060 345,1016" fill="#ffffff" stroke="#C2410C" stroke-width="2"/>
+    <text x="450" y="1012" text-anchor="middle" font-size="12.5" font-weight="700" fill="#9A3412">Deposit account</text>
+    <text x="450" y="1030" text-anchor="middle" font-size="12.5" font-weight="700" fill="#9A3412">APPROVED?</text>
+  </g>
+  <!-- Phase 4 precondition note -->
+  <text x="44" y="746" font-size="10.5" font-style="italic" fill="#9A3412">Precondition: Platform KYB = APPROVED</text>
+  <text x="44" y="762" font-size="10.5" font-style="italic" fill="#9A3412">is required for all wire/* endpoints.</text>
+
+  <!-- ===================== HUB ===================== -->
+  <rect x="270" y="1092" width="360" height="56" rx="8" fill="#334155"/>
+  <text x="450" y="1116" text-anchor="middle" font-size="13.5" font-weight="700" fill="#ffffff">Sub-account operational</text>
+  <text x="450" y="1134" text-anchor="middle" font-size="10.5" fill="#CBD5E1">Deposit · payout · on-chain · convert — independent, call in any order</text>
+
+  <!-- ===================== OPERATE BOXES ===================== -->
+  <!-- Deposit (in) -->
+  <g>
+    <rect x="300" y="1184" width="300" height="66" rx="8" fill="#059669"/>
+    <text x="450" y="1207" text-anchor="middle" font-size="12.5" font-weight="700" fill="#ffffff">Fund the account (deposit)</text>
+    <text x="450" y="1226" text-anchor="middle" font-size="10.5" fill="#D1FAE5" font-family="Menlo, Consolas, monospace">GET wire/deposit/accounts (instructions)</text>
+    <text x="450" y="1242" text-anchor="middle" font-size="10.5" fill="#D1FAE5" font-family="Menlo, Consolas, monospace">track via wire/deposit/orders</text>
+  </g>
+
+  <!-- Fiat Payout (out) -->
+  <g>
+    <rect x="300" y="1302" width="300" height="58" rx="8" fill="#DB2777"/>
+    <text x="450" y="1324" text-anchor="middle" font-size="11" font-weight="700" fill="#ffffff" font-family="Menlo, Consolas, monospace">GET /wire/payout/account/requirements</text>
+    <text x="450" y="1344" text-anchor="middle" font-size="10.5" fill="#FCE7F3">channel · country · currency · rail</text>
+
+    <rect x="300" y="1380" width="300" height="58" rx="8" fill="#DB2777"/>
+    <text x="450" y="1402" text-anchor="middle" font-size="11.5" font-weight="700" fill="#ffffff" font-family="Menlo, Consolas, monospace">POST /wire/payout/account/create</text>
+    <text x="450" y="1422" text-anchor="middle" font-size="10.5" fill="#FCE7F3">payee bank details → IN_REVIEW</text>
+
+    <rect x="300" y="1458" width="300" height="58" rx="8" fill="#DB2777"/>
+    <text x="450" y="1480" text-anchor="middle" font-size="11.5" font-weight="700" fill="#ffffff" font-family="Menlo, Consolas, monospace">GET /wire/payout/accounts — poll</text>
+    <text x="450" y="1500" text-anchor="middle" font-size="10.5" fill="#FCE7F3">IN_REVIEW / AVAILABLE / NEEDS_UPDATE</text>
+
+    <!-- decision 3 (payout account) -->
+    <polygon points="450,1526 555,1570 450,1614 345,1570" fill="#ffffff" stroke="#BE185D" stroke-width="2"/>
+    <text x="450" y="1566" text-anchor="middle" font-size="12.5" font-weight="700" fill="#9D174D">Payout account</text>
+    <text x="450" y="1584" text-anchor="middle" font-size="12.5" font-weight="700" fill="#9D174D">AVAILABLE?</text>
+
+    <rect x="300" y="1626" width="300" height="58" rx="8" fill="#DB2777"/>
+    <text x="450" y="1648" text-anchor="middle" font-size="11.5" font-weight="700" fill="#ffffff" font-family="Menlo, Consolas, monospace">POST /wire/payout/order/create</text>
+    <text x="450" y="1668" text-anchor="middle" font-size="10.5" fill="#FCE7F3">amount · payoutAccountId → PENDING</text>
+
+    <rect x="300" y="1704" width="300" height="58" rx="8" fill="#DB2777"/>
+    <text x="450" y="1726" text-anchor="middle" font-size="12" font-weight="700" fill="#ffffff" font-family="Menlo, Consolas, monospace">GET /wire/payout/order — poll</text>
+    <text x="450" y="1746" text-anchor="middle" font-size="10.5" fill="#FCE7F3">PENDING → PROCESSING → COMPLETED</text>
+  </g>
+
+  <!-- On-chain (out) -->
+  <g>
+    <rect x="300" y="1826" width="300" height="58" rx="8" fill="#7C3AED"/>
+    <text x="450" y="1848" text-anchor="middle" font-size="12.5" font-weight="700" fill="#ffffff" font-family="Menlo, Consolas, monospace">GET /asset/currencies</text>
+    <text x="450" y="1868" text-anchor="middle" font-size="10.5" fill="#EDE9FE">discover currencies &amp; chains</text>
+
+    <rect x="300" y="1904" width="300" height="58" rx="8" fill="#7C3AED"/>
+    <text x="450" y="1926" text-anchor="middle" font-size="12.5" font-weight="700" fill="#ffffff" font-family="Menlo, Consolas, monospace">POST /addressBook</text>
+    <text x="450" y="1946" text-anchor="middle" font-size="10.5" fill="#EDE9FE">whitelist the destination address</text>
+
+    <rect x="300" y="1982" width="300" height="58" rx="8" fill="#7C3AED"/>
+    <text x="450" y="2004" text-anchor="middle" font-size="12.5" font-weight="700" fill="#ffffff" font-family="Menlo, Consolas, monospace">POST /asset/withdraw</text>
+    <text x="450" y="2024" text-anchor="middle" font-size="10.5" fill="#EDE9FE">currency · chain · address · amount</text>
+
+    <rect x="300" y="2060" width="300" height="58" rx="8" fill="#7C3AED"/>
+    <text x="450" y="2082" text-anchor="middle" font-size="12" font-weight="700" fill="#ffffff" font-family="Menlo, Consolas, monospace">GET /asset/records — poll</text>
+    <text x="450" y="2102" text-anchor="middle" font-size="10.5" fill="#EDE9FE">track the on-chain withdrawal</text>
+  </g>
+
+  <!-- Convert & Balances -->
+  <g>
+    <rect x="300" y="2176" width="300" height="66" rx="8" fill="#0F766E"/>
+    <text x="450" y="2199" text-anchor="middle" font-size="13" font-weight="700" fill="#ffffff">Convert &amp; balances</text>
+    <text x="450" y="2218" text-anchor="middle" font-size="10.5" fill="#99F6E4" font-family="Menlo, Consolas, monospace">convert/order/create · convert/orders</text>
+    <text x="450" y="2234" text-anchor="middle" font-size="10.5" fill="#99F6E4" font-family="Menlo, Consolas, monospace">account/balances</text>
+  </g>
+
+  <!-- ===================== SPINE ARROWS (onboarding) ===================== -->
+  <g stroke="#475569" stroke-width="2" fill="none">
+    <line x1="450" y1="170"  x2="450" y2="190"  marker-end="url(#arrow)"/>
+    <line x1="450" y1="250"  x2="450" y2="304"  marker-end="url(#arrow)"/>
+    <line x1="450" y1="364"  x2="450" y2="440"  marker-end="url(#arrow)"/>
+    <line x1="450" y1="500"  x2="450" y2="520"  marker-end="url(#arrow)"/>
+    <line x1="450" y1="580"  x2="450" y2="590"  marker-end="url(#arrow)"/>
+    <line x1="450" y1="680"  x2="450" y2="742"  marker-end="url(#arrow)"/>
+    <line x1="450" y1="802"  x2="450" y2="822"  marker-end="url(#arrow)"/>
+    <line x1="450" y1="882"  x2="450" y2="902"  marker-end="url(#arrow)"/>
+    <line x1="450" y1="962"  x2="450" y2="970"  marker-end="url(#arrow)"/>
+    <line x1="450" y1="1060" x2="450" y2="1090" marker-end="url(#arrow)"/>
+    <!-- payout track internal -->
+    <line x1="450" y1="1360" x2="450" y2="1378" marker-end="url(#arrow)"/>
+    <line x1="450" y1="1438" x2="450" y2="1456" marker-end="url(#arrow)"/>
+    <line x1="450" y1="1516" x2="450" y2="1524" marker-end="url(#arrow)"/>
+    <line x1="450" y1="1614" x2="450" y2="1624" marker-end="url(#arrow)"/>
+    <line x1="450" y1="1684" x2="450" y2="1702" marker-end="url(#arrow)"/>
+    <!-- on-chain track internal -->
+    <line x1="450" y1="1884" x2="450" y2="1902" marker-end="url(#arrow)"/>
+    <line x1="450" y1="1962" x2="450" y2="1980" marker-end="url(#arrow)"/>
+    <line x1="450" y1="2040" x2="450" y2="2058" marker-end="url(#arrow)"/>
+  </g>
+
+  <!-- Yes labels -->
+  <text x="464" y="720"  font-size="11" font-weight="700" fill="#15803D">Yes</text>
+  <text x="464" y="1084" font-size="11" font-weight="700" fill="#15803D">Yes</text>
+  <text x="466" y="1620" font-size="11" font-weight="700" fill="#15803D">Yes</text>
+
+  <!-- ===================== OPERATE BUS (parallel branches from hub) ===================== -->
+  <path d="M450,1148 V1160 H252 V2209" stroke="#64748B" stroke-width="2" fill="none"/>
+  <g stroke="#64748B" stroke-width="2" fill="none">
+    <line x1="252" y1="1217" x2="300" y2="1217" marker-end="url(#arrowBus)"/>
+    <line x1="252" y1="1331" x2="300" y2="1331" marker-end="url(#arrowBus)"/>
+    <line x1="252" y1="1855" x2="300" y2="1855" marker-end="url(#arrowBus)"/>
+    <line x1="252" y1="2209" x2="300" y2="2209" marker-end="url(#arrowBus)"/>
+  </g>
+
+  <!-- ===================== LOOP-BACK ARROWS (not approved) ===================== -->
+  <g stroke="#DC2626" stroke-width="2" fill="none" stroke-dasharray="6 4">
+    <!-- decision 1 → back to submit KYB -->
+    <path d="M555,636 H636 V471 H600" marker-end="url(#arrowRed)"/>
+    <!-- decision 2 → back to deposit requirements/create -->
+    <path d="M555,1016 H652 V773 H600" marker-end="url(#arrowRed)"/>
+    <!-- decision 3 → back to payout account create/update -->
+    <path d="M555,1570 H640 V1409 H600" marker-end="url(#arrowRed)"/>
+  </g>
+  <text x="646" y="544"  font-size="10.5" fill="#DC2626" font-weight="700">No — not APPROVED</text>
+  <text x="646" y="560"  font-size="10.5" fill="#DC2626">fix &amp; resubmit</text>
+  <text x="662" y="888"  font-size="10.5" fill="#DC2626" font-weight="700">No — not APPROVED</text>
+  <text x="662" y="904"  font-size="10.5" fill="#DC2626">fix &amp; resubmit</text>
+  <text x="650" y="1478" font-size="10.5" fill="#DC2626" font-weight="700">No — NEEDS_UPDATE</text>
+  <text x="650" y="1494" font-size="10.5" fill="#DC2626">update &amp; resubmit</text>
+
+  <!-- Payout precondition reminder -->
+  <text x="44" y="1600" font-size="10" font-style="italic" fill="#9D174D">wire/payout/* also needs</text>
+  <text x="44" y="1614" font-size="10" font-style="italic" fill="#9D174D">Platform KYB = APPROVED.</text>
+</svg>

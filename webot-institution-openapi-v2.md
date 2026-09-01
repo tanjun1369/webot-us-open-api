@@ -4,6 +4,14 @@ HTTP API reference for institutional service providers (`/api/v2/institution/*`)
 
 > This is the **v2** institution reference. Unlike v1 ([webot-institution-openapi.md](./webot-institution-openapi.md)), v2 uses **public-key signature authentication** (RSA or Ed25519) and identifies the target sub-account by **`userId`** (a UUID) rather than `uid`. Authentication is documented in full below — v2 does **not** share the v1 authentication section.
 
+## End-to-End Flow
+
+The diagram below shows the full path from registering your public key to moving money on a sub-account. **Phases 1–4 are the onboarding spine** (sequential): [Authentication](#authentication) → [Create Sub-Account](#1-create-sub-account) → [Platform KYB](#kyb-endpoints) → [Channel Onboarding](#4-onboard-a-deposit-account-channel-kyb). Once the sub-account is operational, the money-movement flows are **independent capabilities you can call in any order**: [deposit](#deposit-endpoints), [fiat payout](#payout-endpoints) (create a payee account and wait for it to reach `AVAILABLE`, then submit the payout), [on-chain withdrawal](#asset-on-chain-endpoints) (whitelist an address, then withdraw), and [convert](#convert-endpoints) / [balances](#account-endpoints).
+
+![Webot Institution Open API v2 end-to-end flow](./webot-institution-openapi-v2-onboarding.svg)
+
+> **Key gate:** all `wire/*` endpoints require the target `userId`'s platform KYB to be `APPROVED` first — see the [KYB precondition](#kyb-endpoints).
+
 ## General Information
 
 | | |
@@ -126,6 +134,10 @@ POST (JSON body): /api/v2/institution/kyb/create:timestamp=1785706000:{"userId":
 ```
 
 Then `X-Signature = base64( sign( canonical_string ) )`, sent together with `X-APIKEY`.
+
+The diagram below summarizes where each parameter comes from, how `sorted_query_string` is built, and how the four segments concatenate. Mixing up a parameter's source is the most common integration error.
+
+![Webot Institution Open API v2 canonical string construction](./webot-institution-openapi-v2-signature.svg)
 
 ---
 
@@ -663,13 +675,16 @@ GET /api/v2/institution/wire/deposit/order
   "result": true,
   "timestamp": 1785706000000,
   "data": {
-    "orderId": "d-9", "channel": "fvbank", "creditCurrency": "USDT",
+    "orderId": "d-9", "channel": "bridge", "creditCurrency": "USDT",
     "receivedCurrency": "USD", "receivedAmount": "100", "feeAmount": "1",
     "creditAmount": "99", "status": "COMPLETED", "rail": "wire", "rate": "1",
-    "createdAt": 1785700000000, "updatedAt": 1785700100000
+    "createdAt": 1785700000000, "updatedAt": 1785700100000,
+    "creditedAt": 1785700050000, "completedAt": 1785700100000
   }
 }
 ```
+
+`createdAt` / `updatedAt` / `creditedAt` / `completedAt` are all millisecond Unix timestamps (`int64`); lifecycle fields are `0` before the event occurs (`creditedAt` before crediting, `completedAt` before the final state).
 
 `status` (`DepositOrderStatus`): `PENDING` (processing) / `CREDITED` (credited, not settled) / `COMPLETED` (final) / `FAILED` (final) / `CANCELED` (final).
 
@@ -793,7 +808,7 @@ GET /api/v2/institution/wire/payout/order
 
 **Request Parameters:** `userId` (required), `orderId` **or** `clientOrderId`, `channel` (required).
 
-`PayoutOrder`: `{ orderId, clientOrderId, channel, payoutAccountId, sourceCurrency, targetCurrency, amount, feeAmount, finalAmount, rate, status, reason, rail, createdAt, updatedAt }`, where `status` (`PayoutOrderStatus`) ∈ `PENDING` / `IN_REVIEW` / `PROCESSING` / `COMPLETED` (final) / `FAILED` (final) / `RETURNED` / `REFUNDING` / `REFUNDED`.
+`PayoutOrder`: `{ orderId, clientOrderId, channel, payoutAccountId, sourceCurrency, targetCurrency, amount, feeAmount, finalAmount, rate, status, reason, rail, createdAt, updatedAt, completedAt, refundedAt }`, where `status` (`PayoutOrderStatus`) ∈ `PENDING` / `IN_REVIEW` / `PROCESSING` / `COMPLETED` (final) / `FAILED` (final) / `RETURNED` / `REFUNDING` / `REFUNDED`. `createdAt` / `updatedAt` / `completedAt` / `refundedAt` are all millisecond Unix timestamps (`int64`); each is `0` before its event occurs (`completedAt` before the final state, `refundedAt` before a refund).
 
 ---
 
