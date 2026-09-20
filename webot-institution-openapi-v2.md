@@ -1376,7 +1376,7 @@ GET /api/v2/institution/asset/records
 | clientId | string | Client-supplied idempotency ID. |
 | currency | string | Currency, e.g. `USDT`. |
 | chain | string | Chain name, e.g. `TRC20`. |
-| type | string | Record type: `deposit` / `withdraw`. |
+| type | string | Record type: `DEPOSIT` / `WITHDRAW`. |
 | internal | boolean | Whether this is an internal (off-chain) transfer. |
 | address | string | Destination address. |
 | tag | string | Destination address Tag/Memo; empty when not applicable. |
@@ -1394,7 +1394,7 @@ GET /api/v2/institution/asset/records
 
 **`status` enum** — the set depends on `type`:
 
-Deposit (`type = deposit`):
+Deposit (`type = DEPOSIT`):
 
 | Value | Meaning |
 |-------|---------|
@@ -1407,7 +1407,7 @@ Deposit (`type = deposit`):
 | `RISKY` | Flagged as risky by risk control. |
 | `VERIFY` | Pending manual verification. |
 
-Withdrawal (`type = withdraw`):
+Withdrawal (`type = WITHDRAW`):
 
 | Value | Meaning |
 |-------|---------|
